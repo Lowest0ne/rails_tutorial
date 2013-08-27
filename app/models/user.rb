@@ -21,6 +21,7 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :email, case_sensitive: false
 
   before_save { email.downcase! }
+  before_save :create_remember_token
 
   validates_presence_of :password
   validates_length_of   :password,  minimum: 6
@@ -28,5 +29,9 @@ class User < ActiveRecord::Base
   validates_presence_of :password_confirmation
   after_validation { self.errors.messages.delete(:password_digest) }
 
+  private
 
+    def create_remember_token
+      self.remember_token = SecureRandom.urlsafe_base64
+    end
 end
